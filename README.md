@@ -16,7 +16,8 @@ Some R scripts require the installation of supplementary packages. For the analy
 * `ape` version 5.8-1  
 * `geomorph` version 4.0.10  
 * `phytools` version 2.4-4  
-* `MASS` version 7.3-61  
+* `MASS` version 7.3-61
+* `Morpho` version 2.13
 
 # 2. Installation guide
 
@@ -66,7 +67,7 @@ The name of the project appears on the upper right corner of the window. There y
 
 ## How to run scripts
 
-1. Set the working directory so that it corresponds to the folder where your scripts and data are (use `/` for Windows systems and `\` for Mac OS). If you have an R project /see above), the working directory is already correct.
+1. Set the working directory so that it corresponds to the folder where your scripts and data are (use `/` for Windows systems and `\` for Mac OS). If you have an R project (see above), the working directory is already correct.
 ```{r wd}
 setwd("C:/.../MyFolder")  # change the path to fit the relevant folder
 ```
@@ -100,6 +101,6 @@ Data files are:
 We provide 4 scripts that correspond to the analyses performed using R, as described in the main text. Four files are provided: 
 
 * `01_RodentiaRawData.R`: load and prepare data set, set graphical parameters *[running time: 1s]*  
-* `02_RodentiaLinearAngular.R`: PCA, linear regressions and CVA of the measurements of the inner ear, standardized by skull length *[running time: 2s]*  
-* `03_RodentiaVolumes.R`: bivariate association between skull shape and inner and middle ear volumes *[running time: 1s]*  
+* `02_RodentiaLinearAngular.R`: PCA, linear regressions and CVA of the measurements of the inner ear, standardized by skull length *[running time: 3s]*  
+* `03_RodentiaVolumes.R`: bivariate association between skull shape and inner and middle ear volumes *[running time: 3s]*  
 * `04_RodentiaPhylTree.R`: phylogenetic signal in different sets of variables *[running time: 18s]*  
