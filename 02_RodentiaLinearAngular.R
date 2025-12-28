@@ -1,9 +1,9 @@
 # ===========================================================================================
 # Title: Rodentia - Analysis of the linear and angular measurements on the inner ear
-# Date: 2025-05-23
+# Date: 2025-12-24
 # -------------------------------------------------------------------------------------------
 # R version: 4.4.2
-# Required extension: MASS
+# Required extension: MASS, Morpho
 # -------------------------------------------------------------------------------------------
 # Aims: Analyze the 16 measurements for the inner ear, standardized by skull length
 # Input (from the script "01_RodentiaRawData.R"): 
@@ -13,12 +13,14 @@
 # - PCA of the 16 variables
 # - linear regression of PC1 on SL (skull length)
 # - CVA of the first 3 principal components
+# - typicality probabilites
 # ===========================================================================================
 
 # ---- Packages and source data ----
 
 # Packages
 library(MASS)  # statistical analyses
+library(Morpho)  # computation of typicality probabilities
 
 # Source data
 source("01_RodentiaRawData.R")
@@ -143,9 +145,9 @@ legend("topright",  # position of the legend
        title = "Clade", # title of the legend
        legend = clade$names,  # text of the legend
        pch = clade$pch,  # symbols of the legend
-       pt.bg = "black", 
+       pt.bg = "black",  # color of the legend
        cex = .6, 
-       border = F)  # color of the legend
+       border = F)
 
 # ---- 2.2 Models 2 and 3: Effect of clade ----
 
@@ -166,6 +168,8 @@ summary(rod.sl.mod3)
 # In this section, we try to find association of variables that discriminate among locomotor groups. We use a reduced number of variables (the 3 first principal components), because the number of variables has to be lower than the number of cases in each group. 
 # Here we do a canonical variate analysis (CVA), the extension of a linear discriminant analysis (LDA) for more than 2 groups (note that in R, the function used is `lda`, so the variables are named LD1 and LD2 in the R output).  
 
+# ---- 3.1 Classification of living specimens ----
+
 # Define the subset (specimen removed when only 1 case per group or unknown)
 rod.sl.df.loco <- subset(rod.sl.df, loco %in% c("arb", "fos", "gli"))
 rod.sl.df.loco$loco <- factor(rod.sl.df.loco$loco)
@@ -181,9 +185,33 @@ table(rod.sl.df.loco$loco, rod.sl.loco.cva.pred$class)
 # Confusion matrix (proportions)
 prop.table(table(rod.sl.df.loco$loco, rod.sl.loco.cva.pred$class))
 
+# Typicality probabilities for the extant specimens
+
+# Classification of the observations
+rod.sl.loco.probas <- typprobClass(x = rod.sl.df.loco[,4:6], 
+                                   groups = rod.sl.df.loco$loco, 
+                                   method = "wilson", small = TRUE)
+# Confusion matrix (counts)
+table(rod.sl.df.loco$loco, rod.sl.loco.probas$groupaffin)
+
+# ---- 3.2 Classification of fossil specimens ----
+
 # Prediction for the unknown
 rod.sl.loco.cva.pred.new <- predict(rod.sl.loco.cva, subset(rod.sl.df, loco == "unb"))
-rod.sl.loco.cva.pred.new
+rod.sl.loco.cva.pred.new  # CV scores and posterior probabilities
+
+# Typicality probabilities for the unknown
+
+# Classification of the observations
+rod.sl.loco.probas.new <- typprobClass(x = subset(rod.sl.df, loco == "unb")[,4:6], 
+                                       data = rod.sl.df.loco[,4:6], 
+                                       groups = rod.sl.df.loco$loco, 
+                                       method = "wilson", small = TRUE)
+# Prediction
+rod.sl.loco.probas.new$groupaffin  # affinities
+rod.sl.loco.probas.new$probs  # typicality probabilities
+
+# ---- 3.3 Visualization of the CVA ----
 
 # Visualization of the scores along the two discriminant vectors.
 
@@ -196,4 +224,3 @@ plot(rod.sl.loco.cva,
 points(rod.sl.loco.cva.pred.new$x, col = "black", pch = 16)
 text(rod.sl.loco.cva.pred.new$x, pos = 4, cex = .5, 
      labels = data.rod.sl$Abbr[which(data.rod.sl$Loco == "unb")])
-
