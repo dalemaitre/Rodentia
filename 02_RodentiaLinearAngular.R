@@ -1,6 +1,6 @@
 # ===========================================================================================
 # Title: Rodentia - Analysis of the linear and angular measurements on the inner ear
-# Date: 2025-12-24
+# Date: 2026-03-24
 # -------------------------------------------------------------------------------------------
 # R version: 4.4.2
 # Required extension: MASS, Morpho
@@ -185,7 +185,12 @@ table(rod.sl.df.loco$loco, rod.sl.loco.cva.pred$class)
 # Confusion matrix (proportions)
 prop.table(table(rod.sl.df.loco$loco, rod.sl.loco.cva.pred$class))
 
-# Typicality probabilities for the extant specimens
+# Compare real vs. predicted group assignment and posterior probabilities
+cbind(rod.sl.df.loco$loco,  # group
+      rod.sl.loco.cva.pred$class,  # Affinities
+      rod.sl.loco.cva.pred$posterior)  # Posterior probabilities
+
+# Typicality probabilities
 
 # Classification of the observations
 rod.sl.loco.probas <- typprobClass(x = rod.sl.df.loco[,4:6], 
@@ -193,6 +198,11 @@ rod.sl.loco.probas <- typprobClass(x = rod.sl.df.loco[,4:6],
                                    method = "wilson", small = TRUE)
 # Confusion matrix (counts)
 table(rod.sl.df.loco$loco, rod.sl.loco.probas$groupaffin)
+
+# Compare real vs. predicted group assignment and typicality probabilities
+cbind(rod.sl.df.loco$loco,  # group
+      rod.sl.loco.probas$groupaffin,  # Affinities
+      rod.sl.loco.probas$probs)  # Typicality probabilities
 
 # ---- 3.2 Classification of fossil specimens ----
 
